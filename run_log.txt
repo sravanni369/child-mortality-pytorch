@@ -1,0 +1,35 @@
+WHO under-five mortality | 200 countries
+train 1990-2010, backtest 2011-2023
+
+BACKTEST median absolute error, deaths per 1,000 (2600 country-years)
+  log drift (0 params)   median  0.71   mean  4.49
+  tiny GRU               median  1.01   mean  3.26
+  log-linear trend       median  1.78   mean  5.62
+  naive last value       median  3.29   mean  8.05
+  linear trend           median  4.78   mean 11.28
+
+  GRU training loss 0.00287 vs closed-form OLS on the same 5 lags 0.00328
+  (below OLS = the extra capacity bought something)
+
+BY REGION (median) - pooled numbers hide where a model fails
+  region                   log drift    tiny GRU log-linear  naive last  linear tren
+  Europe                        0.40        0.40        0.85        0.78        2.25
+  Africa                        3.49        3.90        8.34       15.46       13.22
+  Americas                      0.41        0.72        1.20        2.27        3.80
+  Western Pacific               0.69        1.22        1.93        1.89        3.39
+  Eastern Mediterranean         0.81        0.99        1.89        4.31        6.72
+  South-East Asia               0.88        1.39        3.11        8.48       13.32
+  unknown                       1.31        1.74        1.39        7.49       30.81
+
+IMPOSSIBLE FORECASTS - a rate cannot be negative
+  linear trend, inside the backtest window: 340 of 2600 country-years
+  linear trend below zero by 2030: 118/200 countries (59%)
+  linear trend below zero by 2050: 173/200 countries (86%)
+  year the fitted line crosses zero, percentiles 5/25/50/75/95: 2015/2021/2026/2039/2075
+  the log-linear and drift models cannot go negative - that is algebra,
+  not evidence, and it is exactly why they are the right functional form
+
+The linear trend is the only model that loses to doing nothing, and the
+only one predicting impossibilities. A zero-parameter log-drift rule beats
+every fitted model here. Picking the right functional form and the right
+baseline mattered more than picking a model.
